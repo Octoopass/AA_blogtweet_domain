@@ -6,6 +6,7 @@ Randomly selects X authors and extracts their data from tweet and blog datasets.
 import pandas as pd
 import random
 import argparse
+import json
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -40,6 +41,53 @@ CONFIG = {
 # ============================================================================
 # END CONFIGURATION SECTION
 # ============================================================================
+
+
+def load_selection_config(config_path=None):
+    """Load selection defaults from a JSON config file."""
+    config = CONFIG.copy()
+    if not config_path:
+        return config
+
+    path = Path(config_path)
+    if not path.is_absolute():
+        path = PROJECT_ROOT / path
+
+    with path.open('r', encoding='utf-8') as file:
+        raw_config = json.load(file)
+
+    data_config = raw_config.get('data_selection', raw_config)
+    mapping = {
+        'num_authors': 'num_authors',
+        'tweet_word_limit': 'tweet_word_limit',
+        'blog_word_limit': 'blog_word_limit',
+        'source_tweet_file': 'tweet_file',
+        'source_blog_file': 'blog_file',
+        'tweet_file': 'tweet_file',
+        'blog_file': 'blog_file',
+        'selected_data_dir': 'output_dir',
+        'output_dir': 'output_dir',
+        'selection_seed': 'seed',
+        'base_seed': 'seed',
+        'seed': 'seed',
+    }
+
+    for source_key, target_key in mapping.items():
+        if source_key not in data_config or data_config[source_key] is None:
+            continue
+        value = data_config[source_key]
+        if target_key in {'tweet_file', 'blog_file', 'output_dir'}:
+            value = str(resolve_project_path(value))
+        config[target_key] = value
+
+    return config
+
+
+def resolve_project_path(value):
+    path = Path(value)
+    if path.is_absolute():
+        return path
+    return PROJECT_ROOT / path
 
 
 def count_words(text):
@@ -272,27 +320,33 @@ def select_random_authors(tweet_file, blog_file, num_authors, tweet_word_limit=5
 
 
 def main():
+    config_parser = argparse.ArgumentParser(add_help=False)
+    config_parser.add_argument('--config', type=str, default=None)
+    config_args, remaining_args = config_parser.parse_known_args()
+    config = load_selection_config(config_args.config)
+
     parser = argparse.ArgumentParser(
         description='Randomly select authors and prepare their data for training',
         formatter_class=argparse.RawDescriptionHelpFormatter,
+        parents=[config_parser],
     )
     
-    parser.add_argument('--num-authors', '-n', type=int, default=CONFIG['num_authors'],
-                       help=f"Number of authors to randomly select (default: {CONFIG['num_authors']})")
-    parser.add_argument('--tweet-file', type=str, default=CONFIG['tweet_file'],
-                       help=f"Path to tweet CSV file (default: {CONFIG['tweet_file']})")
-    parser.add_argument('--blog-file', type=str, default=CONFIG['blog_file'],
-                       help=f"Path to blog CSV file (default: {CONFIG['blog_file']})")
-    parser.add_argument('--tweet-word-limit', type=int, default=CONFIG['tweet_word_limit'],
-                       help=f"Maximum word count for tweet data per author (default: {CONFIG['tweet_word_limit']})")
-    parser.add_argument('--blog-word-limit', type=int, default=CONFIG['blog_word_limit'],
-                       help=f"Maximum word count for blog data per author (default: {CONFIG['blog_word_limit']}, 0 = no limit)")
-    parser.add_argument('--output-dir', type=str, default=CONFIG['output_dir'],
-                       help=f"Directory to save output files (default: {CONFIG['output_dir']})")
-    parser.add_argument('--seed', type=int, default=CONFIG['seed'],
-                       help=f"Random seed for reproducibility (default: {CONFIG['seed']})")
+    parser.add_argument('--num-authors', '-n', type=int, default=config['num_authors'],
+                       help=f"Number of authors to randomly select (default: {config['num_authors']})")
+    parser.add_argument('--tweet-file', type=str, default=config['tweet_file'],
+                       help=f"Path to tweet CSV file (default: {config['tweet_file']})")
+    parser.add_argument('--blog-file', type=str, default=config['blog_file'],
+                       help=f"Path to blog CSV file (default: {config['blog_file']})")
+    parser.add_argument('--tweet-word-limit', type=int, default=config['tweet_word_limit'],
+                       help=f"Maximum word count for tweet data per author (default: {config['tweet_word_limit']})")
+    parser.add_argument('--blog-word-limit', type=int, default=config['blog_word_limit'],
+                       help=f"Maximum word count for blog data per author (default: {config['blog_word_limit']}, 0 = no limit)")
+    parser.add_argument('--output-dir', type=str, default=config['output_dir'],
+                       help=f"Directory to save output files (default: {config['output_dir']})")
+    parser.add_argument('--seed', type=int, default=config['seed'],
+                       help=f"Random seed for reproducibility (default: {config['seed']})")
     
-    args = parser.parse_args()
+    args = parser.parse_args(remaining_args)
     
     # Handle blog_word_limit: treat 0 or negative values as None (no limit)
     blog_limit = args.blog_word_limit if args.blog_word_limit and args.blog_word_limit > 0 else None

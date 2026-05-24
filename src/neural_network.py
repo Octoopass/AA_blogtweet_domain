@@ -42,7 +42,7 @@ class Config:
     # Shared feature-vector settings
     USE_BLOG_TITLE = True
     TWEET_GROUP_SIZE = 10
-    USE_SEMANTIC_CLUSTERING = True
+    USE_SEMANTIC_CLUSTERING = False
     SEMANTIC_CLUSTER_K = 10
     SEMANTIC_MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
     TEST_SIZE = 0.2
@@ -53,7 +53,7 @@ class Config:
     FEATURE_SELECTION_RATIO = 0.05
 
     # Domain weighting
-    USE_DOMAIN_WEIGHTING = True
+    USE_DOMAIN_WEIGHTING = False
     TWEET_WEIGHT = 3.0
     BLOG_WEIGHT = 1.0
 

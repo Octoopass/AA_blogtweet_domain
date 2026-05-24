@@ -1,0 +1,56 @@
+{
+  "data_selection": {
+    "num_authors": 30,
+    "tweet_word_limit": 3000,
+    "blog_word_limit": 3000,
+    "source_tweet_file": "data/Tweet30.csv",
+    "source_blog_file": "data/Blog30.csv",
+    "selected_data_dir": "training_data",
+    "selection_seed": null,
+    "base_seed": 42,
+    "skip_selection": false
+  },
+  "models": {
+    "compare_unified": true,
+    "compare_tweet_only": true,
+    "compare_neural_network": false,
+    "compare_distilbert": false,
+    "unified_model_type": "svm",
+    "tweet_only_model_type": "svm",
+    "neural_network_model_type": "all"
+  },
+  "training": {
+    "num_runs": 1,
+    "test_size": 0.2,
+    "tweet_group_size": 10,
+    "use_blog_title": true,
+    "use_domain_weighting": false,
+    "tweet_weight": 3.0,
+    "blog_weight": 1.0
+  },
+  "features": {
+    "use_4grams": true,
+    "top_4grams": 1000,
+    "use_feature_selection": true,
+    "feature_selection_ratio": 0.05,
+    "tweet_use_feature_selection": false,
+    "use_semantic_clustering": false,
+    "semantic_cluster_k": 10,
+    "semantic_model_name": "paraphrase-multilingual-MiniLM-L12-v2"
+  },
+  "output": {
+    "results_dir": "results/averaged",
+    "averaged_results_file": "averaged_evaluation_results.txt",
+    "detailed_results_file": "detailed_run_results.json",
+    "comparison_summary_file": "model_comparison_summary.csv"
+  },
+  "distilbert": {
+    "distilbert_model_name": "distilbert-base-uncased",
+    "distilbert_max_length": 256,
+    "distilbert_batch_size": 8,
+    "distilbert_learning_rate": 0.00002,
+    "distilbert_num_epochs": 5,
+    "distilbert_use_blog_data": true,
+    "distilbert_use_tweet_data": true
+  }
+}

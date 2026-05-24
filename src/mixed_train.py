@@ -43,7 +43,7 @@ class Config:
     # Data parameters
     USE_BLOG_TITLE = True
     TWEET_GROUP_SIZE = 10  # Number of tweets to combine per instance
-    USE_SEMANTIC_CLUSTERING = True
+    USE_SEMANTIC_CLUSTERING = False
     SEMANTIC_CLUSTER_K = 10
     SEMANTIC_MODEL_NAME = 'paraphrase-multilingual-MiniLM-L12-v2'
     
@@ -54,7 +54,7 @@ class Config:
     CV_N_SPLITS = 5
     
     # Domain weighting (tweet vs blog)
-    USE_DOMAIN_WEIGHTING = True
+    USE_DOMAIN_WEIGHTING = False
     TWEET_WEIGHT = 3.0
     BLOG_WEIGHT = 1.0
     
