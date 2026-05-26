@@ -89,6 +89,16 @@ Full workflow from config:
 python src/evaluate.py --config config/experiment_config.json
 ```
 
+Workflow with 5 random author selections:
+
+```bash
+python src/random_selection_evaluate.py --config config/experiment_config.json --selection-runs 5 --inner-num-runs 1 --output-dir results/random_selection_averaged
+```
+
+`random_selection_evaluate.py` runs `evaluate.py` five times. Each outer run uses
+a different random `selection_seed`, writes a separate selected dataset, and then
+aggregates the five `model_comparison_summary.csv` files.
+
 Only select data:
 
 ```bash
@@ -121,6 +131,7 @@ python src/evaluate.py --config config/experiment_config.json --unified-model-ty
 
 ```bash
 python src/mixed_train.py
+python src/blog_only.py
 python src/tweet_only.py
 python src/neural_network.py
 python src/distilbert.py
