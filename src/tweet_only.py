@@ -30,6 +30,13 @@ from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.corpus import words, stopwords
 from nltk import pos_tag
 
+try:
+    from xgboost import XGBClassifier
+    XGBOOST_AVAILABLE = True
+except ImportError:
+    XGBClassifier = None
+    XGBOOST_AVAILABLE = False
+
 
 # ============================================================================
 # CONFIGURATION

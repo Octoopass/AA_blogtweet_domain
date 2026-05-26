@@ -17,6 +17,13 @@ from sklearn.multiclass import OneVsRestClassifier
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.svm import SVC
 
+try:
+    from xgboost import XGBClassifier
+    XGBOOST_AVAILABLE = True
+except ImportError:
+    XGBClassifier = None
+    XGBOOST_AVAILABLE = False
+
 from utils.feature_selection import select_features_mi
 from utils.paths import ensure_parent_dir, project_path, results_path
 from utils.stylometric_features import UnifiedFeatureExtractor

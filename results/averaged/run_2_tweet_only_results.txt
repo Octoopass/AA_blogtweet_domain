@@ -1,0 +1,67 @@
+======================================================================
+TWEET-ONLY MODEL EVALUATION RESULTS
+======================================================================
+
+Training instances: 322
+Test instances: 81
+
+TWEET MODEL RESULTS (All Models):
+----------------------------------------------------------------------
+VOTING:
+  Accuracy: 85.19%
+  Macro F1: 79.80%
+  Macro Recall: 81.56%
+
+Best Tweet Model: VOTING
+
+======================================================================
+BEST TWEET MODEL DETAILED RESULTS
+Model: VOTING
+======================================================================
+
+Accuracy: 85.19%
+Macro Precision: 81.11%
+Macro Recall: 81.56%
+Macro F1-Score: 79.80%
+
+Weighted Precision: 85.80%
+Weighted Recall: 85.19%
+Weighted F1-Score: 84.21%
+
+Classification Report:
+                 precision    recall  f1-score   support
+
+AirPowerHistory       0.75      1.00      0.86         3
+     Akamalnath       0.75      1.00      0.86         3
+   CSReportBlog       1.00      1.00      1.00         2
+    Cairngorm22       0.50      0.50      0.50         2
+DementiaStudies       1.00      1.00      1.00         2
+ Destresssydney       1.00      0.50      0.67         2
+InvincibleWheel       0.50      1.00      0.67         2
+     JacquiWine       1.00      1.00      1.00         1
+JustineLaismith       1.00      1.00      1.00         2
+  KillchainBlog       0.75      0.75      0.75         4
+     MarkNeary1       1.00      1.00      1.00         3
+ MarshallColman       0.67      1.00      0.80         2
+MunicipalDreams       0.50      0.50      0.50         2
+    NattskogJSK       1.00      1.00      1.00         6
+ OneSoulJourney       1.00      1.00      1.00         7
+         Raziq1       1.00      1.00      1.00         1
+    RyanEckford       1.00      0.50      0.67         2
+    SuzieSiegel       1.00      1.00      1.00         2
+TheNightGallery       0.00      0.00      0.00         1
+     WinthropDC       1.00      1.00      1.00         2
+    amywelborn2       1.00      1.00      1.00         1
+collinsjacob115       1.00      1.00      1.00         3
+ cum_granosalis       0.00      0.00      0.00         1
+     empathiser       0.50      1.00      0.67         2
+        jdubqca       1.00      0.80      0.89         5
+        karim2k       0.67      0.50      0.57         4
+      rfcyouths       1.00      1.00      1.00         5
+rpstranslations       0.75      0.75      0.75         4
+shadmansmusings       1.00      0.67      0.80         3
+         wkarve       1.00      1.00      1.00         2
+
+       accuracy                           0.85        81
+      macro avg       0.81      0.82      0.80        81
+   weighted avg       0.86      0.85      0.84        81
