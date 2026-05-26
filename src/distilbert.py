@@ -11,16 +11,6 @@ warnings.filterwarnings('ignore')
 
 from utils.paths import ensure_parent_dir, project_path, results_path
 
-try:
-    from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments
-    import torch
-    from torch.utils.data import Dataset
-    TRANSFORMERS_AVAILABLE = True
-except ImportError:
-    TRANSFORMERS_AVAILABLE = False
-    print("[ERROR] Transformers library not available!")
-    print("Install with: pip install transformers torch")
-    exit(1)
 
 # ============================================================================
 # CONFIGURATION
@@ -36,7 +26,7 @@ class Config:
     BLOG_CSV = str(project_path('training_data', 'selected_blogs.csv'))
     TWEET_CSV = str(project_path('training_data', 'selected_tweets.csv'))
     
-    # MODE 2: Pre-existing train/test split (set USE_PRESPLIT_DATA = True to use these)
+    # MODE 2: Pre-existing train/test split
     USE_PRESPLIT_DATA = False  # Set to True to use pre-split files below
     TRAIN_CSV = r''  # Training data CSV
     TEST_CSV = r''    # Test data CSV

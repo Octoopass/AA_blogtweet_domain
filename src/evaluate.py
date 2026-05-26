@@ -2,10 +2,6 @@
 Combined Script: Data Selection + Multiple Model Training Runs + Averaged Evaluation
 Selects random authors, trains models multiple times with different random seeds, 
 and reports averaged results with standard deviations.
-
-Now includes comparison with tweet-only model from tweet_only.py!
-
-3. Separate Blog+Tweet Combined (separate.py) - DISABLED by default for speed - Combines blog and tweet models with voting
 """
 
 import pandas as pd
@@ -41,21 +37,20 @@ CONFIG = {
     'selected_data_dir': str(project_path('training_data')),
     
     # Training Parameters
-    'num_runs': 5,  # Number of training runs (3-5 recommended)
+    'num_runs': 5,  # Number of training runs
     'base_seed': 42,  # Base seed for training runs
-    'selection_seed': None,  # None means random author selection
+    'selection_seed': None,  # Random author selection
     'skip_selection': False,
     
     # Model Comparison Configuration
-    # Choose which approaches to compare
     'compare_unified': True,  # Unified Blog+Tweet model (mixed_train.py)
     'compare_tweet_only': True,  # Tweet-only model with tweet-specific features (separate.py)
     'compare_neural_network': False,
     'compare_distilbert': False,
     
     # Model configuration for each approach
-    'unified_model_type': 'all',  # For unified approach: 'svm', 'logistic_regression', 'xgboost', 'bagging', 'voting', 'all'
-    'tweet_only_model_type': 'all',  # For tweet-only approach
+    'unified_model_type': 'all',  # For unified: 'svm', 'logistic_regression', 'xgboost', 'bagging', 'voting', 'all'
+    'tweet_only_model_type': 'voting',  # For tweet-only approach
     'neural_network_model_type': 'all',  # For neural network approach: 'mlp', 'bilstm', 'all'
     
     # Training parameters (shared across approaches)
@@ -73,8 +68,8 @@ CONFIG = {
     'use_feature_selection': True,
     'feature_selection_ratio': 0.05,
     
-    # Tweet model specific settings
-    'tweet_use_feature_selection': False,  # Disable feature selection for tweet models
+    # Tweet model feature selection (Unnecessary)
+    'tweet_use_feature_selection': False,  # Disable feature selection for tweet models 
     
     # Output files
     'results_dir': str(results_path('averaged')),
@@ -234,8 +229,8 @@ class MultiRunTrainer:
             return {self.config['unified_model_type']: results}
     
     def _train_separate_models(self, run_number, seed):
-        """Train tweet-only model using tweet_only.py (faster version without blog model)"""
-        # Import here to avoid issues if file doesn't exist
+        """Train tweet-only model using tweet_only.py"""
+        # If file doesn't exist
         try:
             from tweet_only import Config as TweetConfig
         except ImportError:
@@ -357,7 +352,7 @@ class MultiRunTrainer:
         return tweet_results
     
     def _parse_separate_results(self, results_file):
-        """Parse the results file from separate.py to extract metrics (DEPRECATED - using tweet_only.py instead)"""
+        """Parse the results file from tweet_only.py to extract metrics"""
         tweet_results = {}
         
         if not results_file.exists():
@@ -367,10 +362,9 @@ class MultiRunTrainer:
             content = f.read()
         
         # Parse tweet model results
-        # This is a simple parser - adjust based on actual output format
         import re
         
-        # Look for "2. TWEET MODEL" section
+        # Look for "TWEET MODEL" section
         tweet_section = re.search(r'2\.\s+TWEET MODEL.*?Test Accuracy:\s+([\d.]+)%.*?Macro F1:\s+([\d.]+)%.*?Macro Recall:\s+([\d.]+)%', 
                                   content, re.DOTALL)
         if tweet_section:
@@ -513,7 +507,7 @@ class MultiRunTrainer:
             json.dump(detailed_data, f, indent=2)
         print(f"[OK] Saved detailed results to: {detailed_file}")
         
-        # Save human-readable summary
+        # Save summary
         summary_file = self.results_dir / self.config['averaged_results_file']
         with open(summary_file, 'w') as f:
             self._write_summary_report(f, averaged_results)
@@ -539,7 +533,7 @@ class MultiRunTrainer:
         return serialized
     
     def _write_summary_report(self, file, averaged_results):
-        """Write human-readable summary report"""
+        """Write summary report"""
         def write(text):
             print(text)
             file.write(text + '\n')
@@ -583,7 +577,7 @@ class MultiRunTrainer:
                                                  key=lambda x: x[1].get('accuracy', {}).get('mean', 0),
                                                  reverse=True):
                     write(f"  {model_name.replace('_', ' ').title():20s}: "
-                         f"Acc={metrics['accuracy']['mean']*100:.2f}% ± {metrics['accuracy']['std']*100:.2f}%")
+                         f"Acc={metrics['accuracy']['mean']*100:.2f}% +/- {metrics['accuracy']['std']*100:.2f}%")
         
         # [2] Tweet-Only
         if 'tweet_only' in averaged_results and averaged_results['tweet_only']:
@@ -606,7 +600,7 @@ class MultiRunTrainer:
                                                  key=lambda x: x[1].get('accuracy', {}).get('mean', 0),
                                                  reverse=True):
                     write(f"  {model_name.replace('_', ' ').title():20s}: "
-                         f"Acc={metrics['accuracy']['mean']*100:.2f}% ± {metrics['accuracy']['std']*100:.2f}%")
+                         f"Acc={metrics['accuracy']['mean']*100:.2f}% +/- {metrics['accuracy']['std']*100:.2f}%")
 
         for approach_key, approach_label, description, approach_number in [
             ('neural_network', 'Neural Network', 'Uses MLP/BiLSTM models on shared feature vectors', 3),
@@ -633,7 +627,7 @@ class MultiRunTrainer:
                         reverse=True
                     ):
                         write(f"  {model_name.replace('_', ' ').title():20s}: "
-                              f"Acc={metrics['accuracy']['mean']*100:.2f}% ± {metrics['accuracy']['std']*100:.2f}%")
+                              f"Acc={metrics['accuracy']['mean']*100:.2f}% +/- {metrics['accuracy']['std']*100:.2f}%")
         
         # Overall winner
         if all_approaches:
@@ -722,7 +716,7 @@ class MultiRunTrainer:
             if metric_name in metrics:
                 stats = metrics[metric_name]
                 write_fn(f"  {metric_name.replace('_', ' ').title()}: "
-                        f"{stats['mean']*100:6.2f}% ± {stats['std']*100:5.2f}%  "
+                        f"{stats['mean']*100:6.2f}% +/- {stats['std']*100:5.2f}%  "
                         f"[{stats['min']*100:.2f}% - {stats['max']*100:.2f}%]")
     
     def _save_comparison_csv(self, averaged_results):
@@ -758,7 +752,7 @@ class MultiRunTrainer:
 
 
 def select_authors_for_training(config):
-    """Run author selection using the select_data.py logic"""
+    """Run author selection using the select_data.py"""
     print("\n" + "="*80)
     print("STEP 1: SELECTING AUTHORS AND PREPARING DATA")
     print("="*80)

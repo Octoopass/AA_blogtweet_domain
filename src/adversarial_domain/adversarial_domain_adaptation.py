@@ -281,7 +281,7 @@ def train_dann(model, train_loader_source, train_loader_target,
             # Entropy loss (encourage maximum uncertainty in domain predictions)
             if Config.USE_ENTROPY_LOSS:
                 # Calculate entropy: -sum(p * log(p))
-                # Maximum entropy = log(2) ≈ 0.69 for binary classification
+                # Maximum entropy = log(2), approximately 0.69 for binary classification
                 domain_probs_source = F.softmax(domain_output_source, dim=1)
                 domain_probs_target = F.softmax(domain_output_target, dim=1)
                 

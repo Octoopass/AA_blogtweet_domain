@@ -17,12 +17,6 @@ from utils.feature_selection import select_features_mi
 from utils.paths import ensure_parent_dir, project_path, results_path
 from utils.stylometric_features import UnifiedFeatureExtractor
 
-try:
-    from xgboost import XGBClassifier
-    XGBOOST_AVAILABLE = True
-except ImportError:
-    XGBOOST_AVAILABLE = False
-    print("[WARNING] XGBoost not available. Install with: pip install xgboost")
 
 # ============================================================================
 # CONFIGURATION
@@ -870,20 +864,20 @@ def _save_cv_results(aggregated_results, best_model_name, effective_splits):
             f.write(f"Folds: {stats.get('n_folds', 0)}\n")
             if 'accuracy' in stats:
                 f.write(
-                    f"Accuracy: {stats['accuracy']*100:.2f}% ± {stats.get('accuracy_std', 0)*100:.2f}% "
+                    f"Accuracy: {stats['accuracy']*100:.2f}% +/- {stats.get('accuracy_std', 0)*100:.2f}% "
                     f"[{stats.get('accuracy_min', 0)*100:.2f}%, {stats.get('accuracy_max', 0)*100:.2f}%]\n"
                 )
             if 'precision_macro' in stats:
                 f.write(
-                    f"Macro Precision: {stats['precision_macro']*100:.2f}% ± {stats.get('precision_macro_std', 0)*100:.2f}%\n"
+                    f"Macro Precision: {stats['precision_macro']*100:.2f}% +/- {stats.get('precision_macro_std', 0)*100:.2f}%\n"
                 )
             if 'recall_macro' in stats:
                 f.write(
-                    f"Macro Recall: {stats['recall_macro']*100:.2f}% ± {stats.get('recall_macro_std', 0)*100:.2f}%\n"
+                    f"Macro Recall: {stats['recall_macro']*100:.2f}% +/- {stats.get('recall_macro_std', 0)*100:.2f}%\n"
                 )
             if 'f1_score_macro' in stats:
                 f.write(
-                    f"Macro F1: {stats['f1_score_macro']*100:.2f}% ± {stats.get('f1_score_macro_std', 0)*100:.2f}%\n"
+                    f"Macro F1: {stats['f1_score_macro']*100:.2f}% +/- {stats.get('f1_score_macro_std', 0)*100:.2f}%\n"
                 )
             f.write("\n")
     print(f"[SUCCESS] Stratified K-fold results saved to: {Config.RESULTS_FILE}")
@@ -1044,7 +1038,7 @@ def run_stratified_kfold_cv(blog_texts, blog_labels, tweet_texts, tweet_labels):
     print(cv_comparison_df.to_string(index=False))
     print(f"\nBest model (mean accuracy): {best_model_name.upper().replace('_', ' ')}")
     print(
-        f"Mean Accuracy: {best_results.get('accuracy', 0)*100:.2f}% ± "
+        f"Mean Accuracy: {best_results.get('accuracy', 0)*100:.2f}% +/- "
         f"{best_results.get('accuracy_std', 0)*100:.2f}%"
     )
     

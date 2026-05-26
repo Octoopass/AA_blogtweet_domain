@@ -30,14 +30,6 @@ from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.corpus import words, stopwords
 from nltk import pos_tag
 
-# Try to import XGBoost
-try:
-    from xgboost import XGBClassifier
-    XGBOOST_AVAILABLE = True
-except ImportError:
-    XGBOOST_AVAILABLE = False
-    print("[WARNING] XGBoost not available. Install with: pip install xgboost")
-
 
 # ============================================================================
 # CONFIGURATION
